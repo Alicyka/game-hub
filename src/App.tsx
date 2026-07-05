@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import apiClient from './services/api-client'; // instanța noastră de Axios
 import GameCard from './components/GameCard';
+import apiClient from './services/api-client'; // Import our custom API client
 import './App.css';
 
+// Interface defining the structure of a single game object
 interface Game {
   id: number;
   name: string;
@@ -10,7 +11,7 @@ interface Game {
   rating: number;
 }
 
-// Forma răspunsului de la RAWG: un obiect cu o proprietate "results" care e un array de Game
+// Interface defining the expected shape of the RAWG API response
 interface FetchGamesResponse {
   count: number;
   results: Game[];
@@ -18,33 +19,28 @@ interface FetchGamesResponse {
 
 function App() {
   const [games, setGames] = useState<Game[]>([]);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    setLoading(true);
-
-    apiClient
-      .get<FetchGamesResponse>('/games')
-      .then((res) => {
-        setGames(res.data.results);
-        setLoading(false);
+    // Fetch games data using the Axios instance
+    apiClient.get<FetchGamesResponse>('/games')
+      .then(res => {
+        setGames(res.data.results); // Save the fetched games into state
       })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
+      .catch(err => {
+        setError(err.message); // Catch and store any potential errors
       });
   }, []);
 
   return (
     <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
       <h1>Game Hub 🎮</h1>
-
-      {error && <p style={{ color: 'red' }}>Eroare: {error}</p>}
-      {loading && <p>Se încarcă...</p>}
-
+      
+      {/* Conditionally render the error message if the API request fails */}
+      {error && <p style={{ color: 'red' }}>Error: {error}</p>}
+      
       <div className="game-grid">
-        {games.map((game) => (
+        {games.map(game => (
           <GameCard key={game.id} game={game} />
         ))}
       </div>

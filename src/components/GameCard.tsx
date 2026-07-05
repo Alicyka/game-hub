@@ -1,6 +1,6 @@
 // src/components/GameCard.tsx
 
-// Definim ce primește componenta noastră (exact ca parametrii unei funcții)
+// Defining what the component gets
 interface Props {
   game: {
     name: string;
