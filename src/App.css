@@ -227,3 +227,37 @@
   margin: 0;
   color: #a0a0a0;
 }
+
+/* Container for the entire layout */
+.app-container {
+  display: flex;
+  gap: 30px; /* Space between sidebar and grid */
+  margin-top: 20px;
+}
+
+/* Sidebar styling */
+.sidebar {
+  width: 200px;
+  flex-shrink: 0; /* Prevent the sidebar from being squished by the grid */
+}
+
+/* Make sure the genre list has no default padding/bullets */
+.genre-list {
+  list-style: none;
+  padding: 0;
+}
+
+.genre-list li {
+  padding: 8px 0;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.genre-list li:hover {
+  text-decoration: underline;
+}
+
+/* Main content takes up the remaining space */
+.main-content {
+  flex-grow: 1;
+}
