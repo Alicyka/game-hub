@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
+import apiClient from './services/api-client'; // instanța noastră de Axios
+import GameCard from './components/GameCard';
 import './App.css';
 
-// TypeScript: Definim cum arată un joc
 interface Game {
   id: number;
   name: string;
@@ -9,70 +10,42 @@ interface Game {
   rating: number;
 }
 
-// Data from Steam
-const mockGames: Game[] = [
-  {
-    id: 1,
-    name: "The Witcher 3: Wild Hunt",
-    background_image: "https://cdn.akamai.steamstatic.com/steam/apps/292030/header.jpg",
-    rating: 4.92
-  },
-  {
-    id: 2,
-    name: "Grand Theft Auto V",
-    background_image: "https://cdn.akamai.steamstatic.com/steam/apps/271590/header.jpg",
-    rating: 4.47
-  },
-  {
-    id: 3,
-    name: "Portal 2",
-    background_image: "https://cdn.akamai.steamstatic.com/steam/apps/620/header.jpg",
-    rating: 4.61
-  },
-  {
-    id: 4,
-    name: "Tomb Raider",
-    background_image: "https://cdn.akamai.steamstatic.com/steam/apps/203160/header.jpg",
-    rating: 4.05
-  }
-];
+// Forma răspunsului de la RAWG: un obiect cu o proprietate "results" care e un array de Game
+interface FetchGamesResponse {
+  count: number;
+  results: Game[];
+}
 
 function App() {
   const [games, setGames] = useState<Game[]>([]);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // În loc să așteptăm după RAWG, simulăm că am primit datele instant
-    setGames(mockGames);
+    setLoading(true);
 
-    // Am comentat codul real. Când RAWG își revine, ștergi setGames(mockGames) 
-    // și decomentezi blocul de mai jos:
-    
-    /*
-    const apiKey = import.meta.env.VITE_RAWG_API_KEY;
-    fetch(`https://api.rawg.io/api/games?key=${apiKey}`)
-      .then(res => res.json())
-      .then(data => setGames(data.results))
-      .catch(err => setError(err.message));
-    */
+    apiClient
+      .get<FetchGamesResponse>('/games')
+      .then((res) => {
+        setGames(res.data.results);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
   }, []);
 
-return (
+  return (
     <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
       <h1>Game Hub 🎮</h1>
-      
+
       {error && <p style={{ color: 'red' }}>Eroare: {error}</p>}
-      
-      {/* Am înlocuit ul/li cu div-uri și am adăugat clase CSS */}
+      {loading && <p>Se încarcă...</p>}
+
       <div className="game-grid">
-        {games.map(game => (
-          <div key={game.id} className="game-card">
-            <img src={game.background_image} alt={game.name} />
-            <div className="game-card-content">
-              <h3>{game.name}</h3>
-              <p>Rating: {game.rating} ⭐</p>
-            </div>
-          </div>
+        {games.map((game) => (
+          <GameCard key={game.id} game={game} />
         ))}
       </div>
     </div>
