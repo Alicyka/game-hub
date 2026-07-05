@@ -1,21 +1,17 @@
-// src/components/GameCard.tsx
+import type { Game } from '../entities';
+import getCroppedImageUrl from '../services/image-url';
 
-// Defining what the component gets
-interface Props {
-  game: {
-    name: string;
-    background_image: string;
-    rating: number;
-  };
+interface Props{
+  game:Game;
 }
 
-const GameCard = ({ game }: Props) => {
+const GameCard = ({game}: Props) =>{
   return (
     <div className="game-card">
-      <img src={game.background_image} alt={game.name} />
+      <img src={getCroppedImageUrl(game.background_image)} alt={game.name} />
       <div className="game-card-content">
         <h3>{game.name}</h3>
-        <p>Rating: {game.rating} ⭐</p>
+        <p>Rating: {game.rating}⭐</p>
       </div>
     </div>
   );
