@@ -2,13 +2,16 @@ import { useState } from 'react';
 import GameCard from './components/GameCard';
 import GenreList from './components/GenreList';
 import SearchInput from './components/SearchInput';
+import PlatformSelector from './components/PlatformSelector';
+import SortSelector from './components/SortSelector';
 import useData from './hooks/useData';
-import type { Game, Genre } from './entities';
+import type { Game } from './entities';
 import './App.css';
-
 
 interface GameQuery {
   genreId?: number;
+  platformId?: number;
+  sortOrder?: string;
   searchText?: string;
 }
 
@@ -20,10 +23,12 @@ function App() {
     {
       params: {
         genres: gameQuery.genreId,
+        parent_platforms: gameQuery.platformId,
+        ordering: gameQuery.sortOrder,
         search: gameQuery.searchText,
       },
     },
-    [gameQuery] 
+    [gameQuery]
   );
 
   return (
@@ -46,6 +51,21 @@ function App() {
         </aside>
 
         <main className="main-content">
+          <div className="toolbar">
+            <PlatformSelector
+              selectedPlatformId={gameQuery.platformId}
+              onSelectPlatform={(platformId) =>
+                setGameQuery({ ...gameQuery, platformId })
+              }
+            />
+            <SortSelector
+              selectedSortOrder={gameQuery.sortOrder}
+              onSelectSortOrder={(sortOrder) =>
+                setGameQuery({ ...gameQuery, sortOrder })
+              }
+            />
+          </div>
+
           {error && <p style={{ color: 'red' }}>Error: {error}</p>}
           {isLoading && <p>Loading games...</p>}
 
